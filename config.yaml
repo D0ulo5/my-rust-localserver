@@ -1,0 +1,33 @@
+host: "127.0.0.1"
+ports:
+  - 8080
+  - 8081
+
+client_max_body_size: 1048576  # 1MB
+
+error_pages:
+  404: "./error_pages/404.html"
+  403: "./error_pages/403.html"
+  500: "./error_pages/500.html"
+
+routes:
+  - path: "/"
+    methods: ["GET"]
+    root: "./www"
+    directory_listing: false
+    default_file: "index.html"
+    
+  - path: "/uploads"
+    methods: ["GET", "POST", "DELETE"]
+    root: "./uploads"
+    directory_listing: true
+    upload_enabled: true
+    
+  - path: "/cgi-bin"
+    methods: ["GET", "POST"]
+    root: "./cgi-bin"
+    cgi_extension: ".py"
+    
+  - path: "/old-site"
+    redirect: "http://127.0.0.1:8080/"
+    permanent: true  # 301 vs 302
