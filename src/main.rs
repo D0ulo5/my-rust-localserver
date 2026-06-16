@@ -1,10 +1,12 @@
 mod config;
+mod server;
 
 use config::Config;
+use server::Server;
 
 fn main() {
     println!("Starting LocalServer...");
-    
+
     // Load configuration
     let config = match Config::from_file("config.yaml") {
         Ok(cfg) => {
@@ -19,7 +21,21 @@ fn main() {
             std::process::exit(1);
         }
     };
-    
-    // TODO: Start server with event loop
-    println!("Server starting on {}:{:?}", config.host, config.ports);
+
+    // Create and run the server
+    let mut server = match Server::new(config) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("Failed to start server: {}", e);
+            std::process::exit(1);
+        }
+    };
+
+    println!("Server is running. Press Ctrl+C to stop.");
+
+    // Run event loop (this runs forever)
+    if let Err(e) = server.run() {
+        eprintln!("Server error: {}", e);
+        std::process::exit(1);
+    }
 }
